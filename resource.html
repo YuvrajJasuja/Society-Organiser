@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resource Section - Society Organiser</title>
+    <link rel="stylesheet" href="resource.css">
+</head>
+<body>
+    <h1>📂 Resource Section</h1>
+    <p>Select a category to add useful resources:</p>
+
+    <div class="card-container">
+        <div class="card" onclick="showForm('tech')">
+            💻 Tech
+        </div>
+        <div class="card" onclick="showForm('marketing')">
+            📢 Marketing
+        </div>
+        <div class="card" onclick="showForm('content')">
+            ✍️ Content
+        </div>
+        <div class="card" onclick="showForm('editing')">
+            🎬 Editing
+        </div>
+    </div>
+
+    <div id="form-section" class="form-section hidden">
+        <h2 id="category-title">Add Resource</h2>
+        <form onsubmit="addResource(event)">
+            <input type="text" id="resource-title" placeholder="Enter resource title" required>
+            <input type="url" id="resource-link" placeholder="Enter resource link" required>
+            <button type="submit">Add</button>
+        </form>
+        <div id="resource-list"></div>
+    </div>
+
+    <script>
+        let currentCategory = "";
+
+        function showForm(category) {
+            currentCategory = category;
+            document.getElementById('form-section').classList.remove('hidden');
+            document.getElementById('category-title').innerText = `Add Resource to ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+        }
+
+        function addResource(event) {
+            event.preventDefault();
+            const title = document.getElementById('resource-title').value;
+            const link = document.getElementById('resource-link').value;
+
+            const resourceList = document.getElementById('resource-list');
+            const newItem = document.createElement('p');
+            newItem.innerHTML = `<strong>${title}:</strong> <a href="${link}" target="_blank">${link}</a>`;
+            resourceList.appendChild(newItem);
+
+            document.getElementById('resource-title').value = "";
+            document.getElementById('resource-link').value = "";
+        }
+    </script>
+</body>
+</html>
