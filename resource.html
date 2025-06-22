@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Resource Section - Society Organiser</title>
-    <link rel="stylesheet" href="resource.css">
+  <meta charset="UTF-8">
+  <title>Resource Section</title>
+  <link rel="stylesheet" href="resource.css">
 </head>
 <body>
-    <h1>📂 Resource Section</h1>
-    <p>Select a category to add useful resources:</p>
+  <div class="main-container">
+    <h1 class="title">📂 Resource Section</h1>
 
     <div class="card-container">
-        <div class="card" onclick="showForm('tech')">
-            💻 Tech
-        </div>
-        <div class="card" onclick="showForm('marketing')">
-            📢 Marketing
-        </div>
-        <div class="card" onclick="showForm('content')">
-            ✍️ Content
-        </div>
-        <div class="card" onclick="showForm('editing')">
-            🎬 Editing
-        </div>
+      <div class="card" onclick="showForm('Tech')">💻 Tech</div>
+      <div class="card" onclick="showForm('Marketing')">📢 Marketing</div>
+      <div class="card" onclick="showForm('Content')">📝 Content</div>
+      <div class="card" onclick="showForm('Editing')">🎬 Editing</div>
     </div>
 
-    <div id="form-section" class="form-section hidden">
-        <h2 id="category-title">Add Resource</h2>
-        <form onsubmit="addResource(event)">
-            <input type="text" id="resource-title" placeholder="Enter resource title" required>
-            <input type="url" id="resource-link" placeholder="Enter resource link" required>
-            <button type="submit">Add</button>
-        </form>
-        <div id="resource-list"></div>
+    <div class="form-container hidden" id="resource-form-box">
+      <h2>Add Resource to <span id="category-name">Tech</span></h2>
+      <form id="resource-form">
+        <input type="text" id="resource-title" placeholder="Enter resource title" required>
+        <input type="url" id="resource-link" placeholder="Enter resource link" required>
+        <button type="submit">Add</button>
+      </form>
     </div>
 
-    <script>
-        let currentCategory = "";
+    <div class="resource-list" id="resource-list"></div>
+  </div>
 
-        function showForm(category) {
-            currentCategory = category;
-            document.getElementById('form-section').classList.remove('hidden');
-            document.getElementById('category-title').innerText = `Add Resource to ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-        }
+  <script>
+    let currentCategory = "";
 
-        function addResource(event) {
-            event.preventDefault();
-            const title = document.getElementById('resource-title').value;
-            const link = document.getElementById('resource-link').value;
+    function showForm(category) {
+      currentCategory = category;
+      document.getElementById("category-name").textContent = category;
 
-            const resourceList = document.getElementById('resource-list');
-            const newItem = document.createElement('p');
-            newItem.innerHTML = `<strong>${title}:</strong> <a href="${link}" target="_blank">${link}</a>`;
-            resourceList.appendChild(newItem);
+      const formBox = document.getElementById("resource-form-box");
+      formBox.classList.remove("hidden");
+      formBox.classList.add("pop");
 
-            document.getElementById('resource-title').value = "";
-            document.getElementById('resource-link').value = "";
-        }
-    </script>
+      loadResources(); // reload specific category
+    }
+
+    document.getElementById("resource-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById("resource-title").value;
+      const link = document.getElementById("resource-link").value;
+
+      const entry = { title, link, category: currentCategory };
+      localStorage.setItem(Date.now(), JSON.stringify(entry));
+
+      document.getElementById("resource-title").value = "";
+      document.getElementById("resource-link").value = "";
+
+      loadResources();
+    });
+
+    function loadResources() {
+      const list = document.getElementById("resource-list");
+      list.innerHTML = "";
+
+      Object.keys(localStorage).forEach(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          if (data.category === currentCategory) {
+            const item = document.createElement("div");
+            item.className = "resource-item";
+            item.innerHTML = `<strong>${data.title}</strong>: <a href="${data.link}" target="_blank">${data.link}</a>`;
+            list.appendChild(item);
+          }
+        } catch {}
+      });
+    }
+  </script>
 </body>
 </html>
